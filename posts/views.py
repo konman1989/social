@@ -5,8 +5,8 @@ from rest_framework.generics import (ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      ListAPIView)
 from rest_framework.filters import SearchFilter
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from .filters import LikesFilter
 from .models import Post, Like

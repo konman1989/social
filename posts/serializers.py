@@ -24,6 +24,13 @@ class LikeSerializer(serializers.ModelSerializer):
         fields = ['post', 'liked_on', 'author']
 
 
+class LikeAnalyticsSerializer(serializers.ModelSerializer):
+    date = serializers.DateTimeField()
+    likes = serializers.IntegerField()
+
+    class Meta:
+        model = Like
+        fields = ['date', 'likes']
 
 
 

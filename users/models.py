@@ -17,8 +17,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    # TODO add required fields
-
     objects = CustomUserManager()
 
     def __str__(self):

@@ -1,18 +1,20 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.generics import (ListAPIView,
                                      CreateAPIView,
-                                     RetrieveUpdateDestroyAPIView)
+                                     RetrieveUpdateDestroyAPIView,
+                                     RetrieveAPIView)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.filters import SearchFilter
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import CustomUser
 from .permissions import IsOwner
 from .serializers import (UserSerializer,
                           UserActivitySerializer,
-                          CreateUserSerializer)
+                          CreateUserSerializer,
+                          CustomTokenSerializer)
 from posts.models import Like
 from posts.serializers import (PostSerializer,
                                LikeSerializer,)
@@ -21,7 +23,7 @@ from posts.serializers import (PostSerializer,
 class UsersView(ListAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter]
     search_fields = ['email', 'first_name', 'last_name']
 
@@ -45,17 +47,20 @@ class UserCreateView(CreateAPIView):
                         headers=headers)
 
 
+class LoginView(TokenObtainPairView):
+    serializer_class = CustomTokenSerializer
+
+
 class UserDetailView(RetrieveUpdateDestroyAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated, IsOwner)
-    filter_backends = [SearchFilter, DjangoFilterBackend]
+    permission_classes = [IsAuthenticated, IsOwner]
 
 
-class UserDetailActivityView(RetrieveUpdateDestroyAPIView):
+class UserDetailActivityView(RetrieveAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserActivitySerializer
-    permission_classes = (IsAuthenticated, IsOwner)
+    permission_classes = [IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
         query = self.request.query_params.get('query')
@@ -71,3 +76,7 @@ class UserDetailActivityView(RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+
+

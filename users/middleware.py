@@ -12,6 +12,7 @@ class UpdateUserLastRequest(MiddlewareMixin):
 
     def process_response(self, request, response):
         if request.user.is_authenticated:
+
             last_request = request.session.get('last_request')
 
             if last_request is None:
